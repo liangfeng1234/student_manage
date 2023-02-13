@@ -12,15 +12,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.ResultSet;
 
 
 public class Login extends JFrame {  //构造各组件
     JPanel contentPane;
     JLabel jLabel1 = new JLabel("用户名：");
-    JTextField uname = new JTextField();
+    public JTextField uname = new JTextField();
     JLabel jLabel2 = new JLabel("密码：");
-    JPasswordField upsd = new JPasswordField();
+    public JPasswordField upsd = new JPasswordField();
     JButton submit = new JButton("登录");
     JButton cancel = new JButton("取消");
     JLabel jLabel3 = new JLabel("学生成绩管理系统");
@@ -64,11 +66,61 @@ public class Login extends JFrame {  //构造各组件
         contentPane.add(submit);
         contentPane.add(cancel);
         contentPane.add(jLabel3);
-        submit.addActionListener(new yanzheng());
-        cancel.addActionListener(new yanzheng());
+
+
+        // Key bindings:
+        // 1. ESC: quit;
+        // 2. ENTER: login
+
+        KeyListener keyListener = new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // if press ENTER, then verify
+                if(e.getKeyChar() == KeyEvent.VK_ENTER){
+                    // Manually call the click event of the submit button
+                    submit.doClick();
+                }
+            }
+        };
+
+        // @10-Kirito
+        // Key binding:
+        // Bind the keyboard key ESC, if the ESC key is pressed, and
+        // if the current interface is the main interface, the current
+        // interface will be closed.
+
+        this.getRootPane().registerKeyboardAction(
+                (ActionEvent e) -> {
+                    setVisible(true);
+
+                    upsd.setText("");
+                    uname.setText("");
+                    dispose();
+                },
+                KeyStroke.getKeyStroke("ESCAPE"),
+                JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
+
+        submit.addActionListener(new LoginListener(this));
+        cancel.addActionListener(new LoginListener(this));
+
+        // Bind to monitor key input when typing
+        uname.addKeyListener(keyListener);
+        upsd.addKeyListener(keyListener);
+        identity.addKeyListener(keyListener);
     }
 
-    class yanzheng implements ActionListener {//验证
+    class LoginListener implements ActionListener {//验证
+        Login login_frame;
+        public LoginListener(Login login_){ login_frame = login_;}
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -97,7 +149,8 @@ public class Login extends JFrame {  //构造各组件
                     }
                     if (login == true) {
                         if (ident.equals("学生")) {
-                            StudentMainUI mui = new StudentMainUI(ID, psd, ident);
+                            StudentMainUI mui = new StudentMainUI(ID, psd, ident, login_frame);
+
                             setVisible(false);
                             mui.setVisible(true);
                         } else if (ident.equals("管理员")) {
@@ -114,6 +167,8 @@ public class Login extends JFrame {  //构造各组件
                 } catch (Exception er) {
                     System.out.println(er.toString());
                 }
+            }else{
+                System.exit(0);
             }
         }
     }
