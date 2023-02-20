@@ -144,7 +144,7 @@ public class Login extends JFrame {  //构造各组件
                     rs = db.Query(sql);
                     if (rs.next()) {
                         login = true;
-                    } else {//设置弹窗。
+                    } else {//设置弹窗
                         JOptionPane.showMessageDialog(null, "用户/密码错误，请重新输入！");
                     }
                     if (login == true) {
@@ -158,15 +158,15 @@ public class Login extends JFrame {  //构造各组件
                             setVisible(false);
                             admin.setVisible(true);
                         } else if (ident.equals("教师")) {
-                                TeacherMainUI teac = new TeacherMainUI(ID, psd, ident);
-                                setVisible(false);
-                                teac.setVisible(true);
+                            TeacherMainUI teac = new TeacherMainUI(ID, psd, ident);
+                            setVisible(false);
+                            teac.setVisible(true);
                         }
-
                     }
                 } catch (Exception er) {
                     System.out.println(er.toString());
                 }
+                db.close();
             }else{
                 System.exit(0);
             }

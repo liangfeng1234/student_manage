@@ -130,6 +130,8 @@ public class TeacherAddInfo extends JFrame{
         gc.gridy = 7;
         gc.anchor = GridBagConstraints.CENTER;
         add(submitButton, gc);
+
+        // Submit button function implementation
         // private JTextField IDField, nameField, sexField, birthdayField, postField, departmentField,pwdField;
         submitButton.addActionListener(e -> {
             String sql = "CALL teacher_add(?,?,?,?,?,?,?)";

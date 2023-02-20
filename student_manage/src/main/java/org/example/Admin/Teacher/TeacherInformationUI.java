@@ -144,25 +144,31 @@ public class TeacherInformationUI {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(1, 3, 10, 10));
 
+        // add button function:
+
         addButton = new JButton("Add");
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Code to add a new teacher to the database
                 System.out.println("Press the add button");
                 new TeacherAddInfo(dBconn);
-
             }
         });
         bottomPanel.add(addButton);
+
+        // delete button function:
 
         deleteButton = new JButton("Delete");
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Code to delete a teacher from the database
                 System.out.println("Press the delete button");
+                new TeacherDeleteInfo(dBconn);
             }
         });
         bottomPanel.add(deleteButton);
+
+        // modify button function:
 
         modifyButton = new JButton("Modify");
         modifyButton.addActionListener(new ActionListener() {

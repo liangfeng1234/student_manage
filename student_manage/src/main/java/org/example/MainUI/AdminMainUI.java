@@ -4,6 +4,7 @@ import org.example.Admin.Course.CourseManage;
 import org.example.Admin.Student.GradesManage;
 import org.example.Admin.Student.StuCourseManage;
 import org.example.Admin.Student.StuManage;
+import org.example.Admin.Teacher.TeacherInformationUI;
 import org.example.Admin.Teacher.TeacherManage;
 
 import javax.swing.*;
@@ -31,6 +32,9 @@ public class AdminMainUI extends JFrame {
 
     public AdminMainUI(String ID, String psd, String ident) {
         try {  //接收各项参数
+
+            // This value is used to dispose of the current window when the user closes it.
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             admin = ID;
             this.psd = psd;
             this.ident = ident;
@@ -66,10 +70,13 @@ public class AdminMainUI extends JFrame {
                 GradesManage gradesManage = new GradesManage();
             }
         });
+
+        // Menu bar click event binding, this function will be called after clicking teacher management
         teacher_manage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TeacherManage TeacherManage = new TeacherManage();
+                // TeacherManage TeacherManage = new TeacherManage();
+                TeacherInformationUI teacherInformationUI = new TeacherInformationUI();
             }
         });
         course_manage.addActionListener(new ActionListener() {
@@ -87,5 +94,7 @@ public class AdminMainUI extends JFrame {
         stu_sys.add(grades_manage);
         teacher_sys.add(teacher_manage);
         course_system.add(course_manage);
+
+        setLocationRelativeTo(null);
     }
 }
