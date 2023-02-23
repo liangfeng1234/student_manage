@@ -73,20 +73,33 @@ public class SelectedCoursePane extends JPanel {
         c2.weighty=0;
         c2.anchor=GridBagConstraints.WEST;
         pane2.add(result,c2);
-        String[] headers={"选择","课程号","课程名","学期","任课教师"};
+        //{"选择","课程号","学期","任课教师"};
+        String[] headers={"","课程号","课程名","学期","任课教师号","任课教师名"};
         model.setColumnIdentifiers(headers);
         //设置SQL语句
-        sql = "select courseID,courseName,teacherName,semester from tb_course_selection where studentID='" + studentID + "'";
-        //System.out.println(sql);
+        //sql = "select courseID,coursesemester,teacherID from tb_course_selection where studentID='" + studentID + "'";
+        sql="select tb_course_selection.courseID,tb_course.courseName,tb_course_selection.semester,tb_course_selection.teacherID,tb_teacher.teacherName from tb_course,tb_teacher,tb_course_selection where tb_course_selection.teacherID=tb_teacher.teacherID and tb_course.courseID=tb_course_selection.courseID and studentID='"+studentID+"'";
         try {
             model=CreateModel();
-            //System.out.println("已查询");
             table = new JTable(model);
+            // 设置"选择"列宽
+            table.getColumnModel().getColumn(0).setPreferredWidth(1);
+            //设置"第一列"为选择框
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.getColumnModel().getColumn(0).setCellRenderer(new CheckBoxRenderer());
             table.getColumnModel().getColumn(0).setCellEditor(new CheckBoxEditor());
-
-            table.getTableHeader().setFont(font2);
+            // 设置行高为30像素
+            table.setRowHeight(20);
+            //设置表头样式
+            JTableHeader header = table.getTableHeader();
+            header.setFont(font2);
+            DefaultTableCellRenderer hr = (DefaultTableCellRenderer) header.getDefaultRenderer();
+            hr.setHorizontalAlignment(JLabel.CENTER);
+            //使用自定义单元格渲染器定义单元格字体大小
+            for(int i=1;i<6;i++)
+            {
+                table.getColumnModel().getColumn(i).setCellRenderer(new CustomTableCellRenderer());
+            }
             jScrollPane1= new JScrollPane(table);
             jScrollPane1.setPreferredSize(new Dimension(660, 150));
             c2.gridy=1;
@@ -108,23 +121,42 @@ public class SelectedCoursePane extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    //设置SQL语句
-                    sql2="delete from tb_course_selection where studentID='"+studentID+"' and courseID='"+rowData[0]+"' and teacherName='"
-                            +rowData[3]+"' and semester='"+rowData[2]+"'";
-//                    sql = "delete from tb_course_selection(studentID, studentName,courseID,courseName,teacherName,semester)"+
-//                            "values('"+studentID+"','"+studentName+"','"+rowData[0]+"','"+rowData[1]+"','"+rowData[3]+"','"+rowData[2]+"')";
-                    int i=db.Update(sql2);
-                    //System.out.println("i: "+i);
+                    //检查此课程是否已登分
+                    sql2="select courseID from tb_score where courseID='"+rowData[0]+"' and studentID='"+studentID+"'";
+                    rs=db.Query(sql2);
+                    if(rs.next()){//ResultSet结果集为空表示此课程未登分
+                        JOptionPane.showMessageDialog(null, "此课程已登分！");
+                    }
+                    else {
+                        sql2="delete from tb_course_selection where studentID='"+studentID+"' and courseID='"+rowData[0]+"' and semester='"+rowData[2]+"'and teacherID='"
+                                +rowData[3]+"'";
+                        int i=db.Update(sql2);
+                        JOptionPane.showMessageDialog(null, "退课成功！");
+                    }
+
                     //刷新显示表格
                     model=CreateModel();
-                    //System.out.println("已查询");
+
                     table = new JTable(model);
+                    // 设置"选择"列宽
+                    table.getColumnModel().getColumn(0).setPreferredWidth(1);
+                    //设置表格第一列为选择框
                     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                     table.getColumnModel().getColumn(0).setCellRenderer(new CheckBoxRenderer());
                     table.getColumnModel().getColumn(0).setCellEditor(new CheckBoxEditor());
+                    //设置表头样式
+                    JTableHeader header = table.getTableHeader();
+                    header.setFont(font2);
+                    DefaultTableCellRenderer hr = (DefaultTableCellRenderer) header.getDefaultRenderer();
+                    hr.setHorizontalAlignment(JLabel.CENTER);
+                    //使用自定义单元格渲染器定义单元格字体大小
+                    for(int j=1;j<6;j++)
+                    {
+                        table.getColumnModel().getColumn(j).setCellRenderer(new CustomTableCellRenderer());
+                    }
+                    // 设置行高为30像素
+                    table.setRowHeight(20);
 
-                    table.getTableHeader().setFont(font2);
-                    TableColumn firstColumn = table.getColumnModel().getColumn(0);  //设置第一列列宽
                     jScrollPane1= new JScrollPane(table);
                     jScrollPane1.setPreferredSize(new Dimension(660, 150));
                     pane2.remove(jScrollPane1);
@@ -162,15 +194,14 @@ public class SelectedCoursePane extends JPanel {
         rs = db.Query(sql);
         while(rs.next()){
             Vector tempvector = new Vector(1, 1);
-            //System.out.println("查询到了数据");
             tempvector.add(false);
-            tempvector.add(rs.getString("courseID"));
-            tempvector.add(rs.getString("courseName"));
-            tempvector.add(rs.getString("semester"));
-            tempvector.add(rs.getString("teacherName"));
+            tempvector.add(rs.getString(1));
+            tempvector.add(rs.getString(2));
+            tempvector.add(rs.getString(3));
+            tempvector.add(rs.getString(4));
+            tempvector.add(rs.getString(5));
             model.addRow(tempvector);
         }
-        //System.out.println("已返回model");
         return model;
     }
     //渲染器
@@ -218,7 +249,6 @@ public class SelectedCoursePane extends JPanel {
                     list.add(table.getValueAt(selectedRow, i));
                 }
                 rowData = list.toArray();
-                //System.out.println("Selected row: " + selectedRow + ", Data: " + java.util.Arrays.toString(rowData));
             }
             return super.getCellEditorValue();
         }
@@ -230,6 +260,20 @@ public class SelectedCoursePane extends JPanel {
                 table.repaint(table.getCellRect(selectedRow, 0, true));
             }
             return result;
+        }
+    }
+
+    // 自定义TableCellRenderer用来更改字体大小
+    class CustomTableCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            // 获取标准的JLabel，用于呈现单元格内容
+            JLabel cell = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            // 更改字体大小
+            cell.setFont(new Font("宋体", Font.PLAIN, 14));
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
+
+            return cell;
         }
     }
 }

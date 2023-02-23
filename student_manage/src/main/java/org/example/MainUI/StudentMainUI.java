@@ -6,7 +6,7 @@ import org.example.Login.Login;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLOutput;
+
 
 public class StudentMainUI extends JFrame {
     Login login_frame;
@@ -23,7 +23,6 @@ public class StudentMainUI extends JFrame {
     JMenuItem course_query=new JMenuItem("课程查询");
     JMenuItem selected_course=new JMenuItem("已选课程");
     JPanel pane=new JPanel();
-    //MyListener listener=new MyListener();
 
     private String studentID, psd, ident;
 
@@ -47,10 +46,9 @@ public class StudentMainUI extends JFrame {
         setResizable(false);  //设置主窗体不可改变大小
         Container c = getContentPane();
         c.setLayout(null);  //设置空布局
-//        System.out.println(this.getWidth());
-//        System.out.println(this.getHeight());
         pane.setBounds((this.getWidth()-1000)/2,(this.getHeight()-500)/2-20,1000,500);
         pane.setLayout(new GridBagLayout());
+        //pane.setBackground(Color.BLUE);
         // @10-Kirito
         // Key bindings:
         // 1. ESC : Exit the program to the login interface

@@ -32,7 +32,7 @@ public class GradesQueryPane extends JPanel{
     private void jbInit(JPanel panel) throws Exception {
         //新建字体样式
         Font font_title=new Font("宋体", Font.BOLD, 30);
-        Font font2=new Font("宋体", Font.PLAIN, 20);
+        Font font2=new Font("宋体", Font.PLAIN, 18);
         //设置标题样式
         jLabel1.setFont(font_title);
         jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
@@ -46,7 +46,7 @@ public class GradesQueryPane extends JPanel{
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2, true);
         this.setBorder(border);
         //设置JTable的列名
-        String[] headers={"课程名称","学生姓名","成绩"};
+        String[] headers={"课程号","课程名","学期","成绩"};
         model.setColumnIdentifiers(headers);
         this.add(jScrollPane1, BorderLayout.CENTER);    //添加滚动面板
         //this.add(dbtable);
@@ -54,7 +54,7 @@ public class GradesQueryPane extends JPanel{
         this.setVisible(true);  //设置课件
         //连接数据库
         DBconn db = new DBconn();
-        sql = "select studentID,courseName,studentName,score from tb_score where studentID='" + studentID + "'";
+        sql = "select tb_score.courseID,tb_course.courseName,tb_score.semester,score from tb_score,tb_course where tb_score.courseID=tb_course.courseID and studentID='" + studentID + "'";
         try {
             int j = model.getRowCount();//删除表格中原有的数据
             if (j > 0) {
@@ -66,15 +66,16 @@ public class GradesQueryPane extends JPanel{
 
             while (rs.next()) {
                 tempvector = new Vector(1, 1);
+                tempvector.add(rs.getString("courseID"));
                 tempvector.add(rs.getString("courseName"));
-                tempvector.add(rs.getString("studentName"));
+                tempvector.add(rs.getString("semester"));
                 tempvector.add(rs.getString("score"));
                 model.addRow(tempvector);
             }
             dbtable.setEnabled(false); //表格中的数据不能修改
             dbtable.getTableHeader().setFont(font2);
-            dbtable.setFont(font2);    //设置表格中的文字大小
-            dbtable.setGridColor(Color.gray);  //设置单元格框线颜色
+            dbtable.setFont(new Font("宋体", Font.PLAIN, 16));    //设置表格中的文字大小
+            //dbtable.setGridColor(Color.gray);  //设置单元格框线颜色
             dbtable.setRowHeight(25);   //设置行宽
             //设置单元格居中显示
             DefaultTableCellRenderer dc=new DefaultTableCellRenderer();
