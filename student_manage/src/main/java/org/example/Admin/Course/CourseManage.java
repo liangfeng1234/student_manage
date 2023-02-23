@@ -7,62 +7,115 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.util.Vector;
-
+import java.awt.event.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 public class CourseManage extends JFrame{
-    JLabel jLabel1 = new JLabel("课程信息管理");
-    ResultSet rs = null;
-    Vector tempvector = new Vector(1, 1);
-    DefaultTableModel model = new DefaultTableModel();
-    JTable dbtable = new JTable(model);
-    JScrollPane jScrollPane1 = new JScrollPane(dbtable);
-    String sql, sxm, sxh;
+    JFrame jFrame;
+    //声明组件
+    JPanel jpanel_1;
+    JLabel jlabel_1;
+    JButton jbutton_1, jbutton_2;
+    DefaultTableModel model1;
+    JTable jtable_1;//表格
+    JScrollPane jscrollpane_1;//滚动条
+
+    //字符串储存各个课程的信息
+    String courseID;//课程号
+    String courseName;//课程名称
+    String courseSemester;//课程所在的学期
+    String courseTeacher;//课程的代课老师
+
+    //字符串存储SQL语句
+    String sql;
+
+    //MenuBar和JMenuItem的设置
+    JMenuBar courseBar = new JMenuBar();
+    //JMenu courseMenu = new JMenu("课程管理");
+    //JMenu courseInfo = new JMenu("课程信息");
+    JMenuItem courseModify = new JMenuItem("课程信息管理");
+    JMenuItem courseStuUI = new JMenuItem("学生成绩管理");
 
     public CourseManage() {
-        try {
-            jbInit();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    private void jbInit() throws Exception {
-        Container container = this.getContentPane();
-        jLabel1.setFont(new Font("宋体", Font.PLAIN, 18));
-        jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel1.setHorizontalTextPosition(SwingConstants.CENTER);
-        container.add(jLabel1, "North");
-        model.addColumn("课程号");
-        model.addColumn("课程名称");
-        model.addColumn("任课教师");
-        model.addColumn("学期");
-        container.add(jScrollPane1, "Center");
-        container.add(dbtable);
-        this.setBounds(277, 277, 900, 500);
-        this.setVisible(true);
-        DBconn db = new DBconn();
+        jFrame = new JFrame("课程详细信息");
+        jFrame.setSize(800, 600);
+        setJMenuBar(courseBar);
+        //courseInfo.setBackground(Color.RED);
+        //courseBar.add(courseInfo);
+        //courseModify.setBackground(Color.CYAN);
+        courseBar.add(courseModify);
+        //courseStuUI.setBackground(Color.GREEN);
+        courseBar.add(courseStuUI);
+        jFrame.setJMenuBar(courseBar);
+        DBconn db = new DBconn();//声明并创建数据库
+        ResultSet res = null;//储存SQL语句查询返回的数据
+        Vector tempVector;//存储一行的数据
+        String[] column1 = {"课程号", "课程名称", "课程所在的学期", "课程的代课老师"};
+        jpanel_1 = new JPanel();//面板
+        jlabel_1 = new JLabel();//标签
+        model1 = new DefaultTableModel(column1, 1);
+        jtable_1 = new JTable(model1);
+        jscrollpane_1 = new JScrollPane(jtable_1);
+        jFrame.add(jscrollpane_1);
+        jFrame.setLocationRelativeTo(null);//设置窗体的位置居中
+        //设置窗体标题
+        jFrame.setTitle("课程信息");
+        jFrame.setVisible(true);
+        jFrame.setResizable(true);
+        //jFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);关闭窗口同时关闭程序
         sql = "select * from tb_course";
-        try {
-            int j = model.getRowCount();//删除表格中原有的数据
+        res = db.Query(sql);//从数据库中查询数据
+        try{
+            //删除model_1原有的数据
+            int j = model1.getRowCount();
             if (j > 0) {
                 for (int i = 0; i < j; i++) {
-                    model.removeRow(0);
+                    model1.removeRow(0);
                 }
             }
-            rs = db.Query(sql); //从数据库中查询相应的数据
-
-            while (rs.next()) {
-                tempvector = new Vector(1, 1);
-                tempvector.add(rs.getString("courseID"));
-                tempvector.add(rs.getString("courseName"));
-                tempvector.add(rs.getString("teacherName"));
-                tempvector.add(rs.getString("semester"));
-                model.addRow(tempvector);
+            while(res.next()){
+                tempVector = new Vector(1, 1);
+                tempVector.add(res.getString("courseID"));
+                tempVector.add(res.getString("courseName"));
+                tempVector.add(res.getString("semester"));
+                tempVector.add(res.getString("teacherID"));
+                model1.addRow(tempVector);
             }
-            dbtable.setEnabled(false); //表格中的数据不能修改
-        } catch (Exception e2) {
-            System.out.println(e2.toString());
+            jtable_1.setEnabled(false);//设置表格的内容不可以更改，默认是可以更改数据的
+        } catch(Exception e){
+            System.out.println(e.toString());
         }
 
+        //courseInfo.addMenuListener(new MyMenuListener());
+        //跳转到CourseModifyUI课程信息管理模块
+        courseModify.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){ CourseModifyUI coursemodifyUI = new CourseModifyUI();}
+        });
+        //跳转到CourseStu课程信息管理模块
+        courseStuUI.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){ CourseStuUI courseStuUI = new CourseStuUI();}
+        });
     }
+
 }
+
+//class MyMenuListener implements MenuListener {
+//    public void menuSelected(MenuEvent e) {
+//        // 当菜单被选中时执行的代码
+//        System.out.println("Selected");
+//        CourseInfo courseInfo = new CourseInfo();
+//    }
+//
+//    public void menuDeselected(MenuEvent e) {
+//        // 当菜单被取消选中时执行的代码
+//        System.out.println("Deselected");
+//    }
+//
+//    public void menuCanceled(MenuEvent e) {
+//        // 当菜单被取消时执行的代码
+//        System.out.println("Cancel");
+//    }
+//}
