@@ -54,7 +54,13 @@ public class ManageGradePane extends JPanel{
         this.setVisible(true);  //设置课件
         //连接数据库
         DBconn db = new DBconn();
-        sql = "select tb_score.courseID,tb_course.courseName, tb_score.studentID, tb_student.studentName, tb_score.semester,score from tb_score,tb_course, tb_student, tb_course_selection where tb_score.courseID=tb_course.courseID and teacherID='" + teacherID + "' and tb_score.studentID = tb_student.studentID";
+        // sql = "select tb_score.courseID,tb_course.courseName, tb_score.studentID, tb_student.studentName, tb_score.semester,score from tb_score,tb_course, tb_student, tb_course_selection where tb_score.courseID=tb_course.courseID and teacherID='" + teacherID + "' and tb_score.studentID = tb_student.studentID";
+        sql = "select distinct cs.courseID, c.courseName, s.studentID, s.studentName, cs.semester, sco.score " +
+                "from tb_course_selection cs, tb_score sco, tb_course c, tb_student s " +
+                "where s.studentID = cs.studentID " +
+                "and s.studentID = sco.studentID " +
+                "and cs.courseID = c.courseID " +
+                "and cs.teacherID = '" + teacherID + "'";
         try {
             int j = model.getRowCount();//删除表格中原有的数据
             if (j > 0) {

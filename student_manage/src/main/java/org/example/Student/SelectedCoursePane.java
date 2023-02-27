@@ -78,7 +78,8 @@ public class SelectedCoursePane extends JPanel {
         model.setColumnIdentifiers(headers);
         //设置SQL语句
         //sql = "select courseID,coursesemester,teacherID from tb_course_selection where studentID='" + studentID + "'";
-        sql="select tb_course_selection.courseID,tb_course.courseName,tb_course_selection.semester,tb_course_selection.teacherID,tb_teacher.teacherName from tb_course,tb_teacher,tb_course_selection where tb_course_selection.teacherID=tb_teacher.teacherID and tb_course.courseID=tb_course_selection.courseID and studentID='"+studentID+"'";
+        //sql="select tb_course_selection.courseID,tb_course.courseName,tb_course_selection.semester,tb_course_selection.teacherID,tb_teacher.teacherName from tb_course,tb_teacher,tb_course_selection where tb_course_selection.teacherID=tb_teacher.teacherID and tb_course.courseID=tb_course_selection.courseID and studentID='"+studentID+"'";
+        sql="select tb_course_selection.courseID,tb_course.courseName,tb_course_selection.semester,tb_course_selection.teacherID,tb_teacher.teacherName from tb_course,tb_teacher,tb_course_selection where tb_course_selection.teacherID=tb_teacher.teacherID and tb_course.courseID=tb_course_selection.courseID and tb_course.semester=tb_course_selection.semester and studentID='"+studentID+"'";
         try {
             model=CreateModel();
             table = new JTable(model);

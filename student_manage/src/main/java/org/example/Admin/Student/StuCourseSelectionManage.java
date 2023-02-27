@@ -148,7 +148,7 @@ public class StuCourseSelectionManage extends JPanel{
             gbc.gridy=0;
             gbc.gridwidth=5;
             gbc.gridheight=1;
-            c.add(subTitle,gbc);
+            //c.add(subTitle,gbc);
             //创建表格
             int j = model.getRowCount();//删除表格中原有的数据
             if (j > 0) {

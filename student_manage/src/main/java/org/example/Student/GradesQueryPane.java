@@ -54,7 +54,10 @@ public class GradesQueryPane extends JPanel{
         this.setVisible(true);  //设置课件
         //连接数据库
         DBconn db = new DBconn();
-        sql = "select tb_score.courseID,tb_course.courseName,tb_score.semester,score from tb_score,tb_course where tb_score.courseID=tb_course.courseID and studentID='" + studentID + "'";
+//        sql = "select tb_score.courseID,tb_course.courseName,tb_score.semester,score " +
+//                "from tb_score,tb_course " +
+//                "where tb_score.courseID=tb_course.courseID and studentID='" + studentID + "'";
+        sql = "select tb_score.courseID,tb_course.courseName,tb_score.semester,score from tb_score,tb_course where tb_score.courseID=tb_course.courseID and tb_score.semester=tb_course.semester and studentID='" + studentID + "'";
         try {
             int j = model.getRowCount();//删除表格中原有的数据
             if (j > 0) {

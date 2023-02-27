@@ -19,7 +19,7 @@ public class DBconn {
             String url = "jdbc:mysql://8.130.52.192:3306/stu_management?useUnicode=true&characterEncoding=UTF-8";
             String user = "kirito";
             String password = "Zpf.021019";
-            // Class.forName("com.mysql.jdbc.Driver");//加载数据库的驱动
+            Class.forName("com.mysql.cj.jdbc.Driver");//加载数据库的驱动
             conn = DriverManager.getConnection(url, user, password);  //连接数据库
             stmt = conn.createStatement(); //创建操作数据库对象
         } catch (Exception ee) {

@@ -154,11 +154,11 @@ public class Login extends JFrame {  //构造各组件
                             setVisible(false);
                             mui.setVisible(true);
                         } else if (ident.equals("管理员")) {
-                            AdminMainUI admin = new AdminMainUI(ID, psd, ident);//调用自定义类MAINUI加载下面的程序
+                            AdminMainUI admin = new AdminMainUI(ID, psd, ident,login_frame);//调用自定义类MAINUI加载下面的程序
                             setVisible(false);
                             admin.setVisible(true);
                         } else if (ident.equals("教师")) {
-                            TeacherMainUI teac = new TeacherMainUI(ID, psd, ident);
+                            TeacherMainUI teac = new TeacherMainUI(ID, psd, ident,login_frame);
                             setVisible(false);
                             teac.setVisible(true);
                         }
